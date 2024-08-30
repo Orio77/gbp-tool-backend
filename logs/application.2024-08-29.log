@@ -1,0 +1,115 @@
+2024-08-29 18:30:24 [main] WARN  o.s.b.t.j.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer - 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/macie/.m2/repository/org/json/json/20231013/json-20231013.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/macie/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2024-08-29 18:30:24 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Starting OllamaSimilarityServiceTest using Java 17.0.4 with PID 10792 (started by macie in C:\Users\macie\tools\gbp-tool)
+2024-08-29 18:30:24 [main] DEBUG c.O.g.s.OllamaSimilarityServiceTest - Running with Spring Boot v3.3.3, Spring v6.1.12
+2024-08-29 18:30:24 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - No active profile set, falling back to 1 default profile: "default"
+2024-08-29 18:30:28 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-29 18:30:29 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Started OllamaSimilarityServiceTest in 4.498 seconds (process running for 5.544)
+2024-08-29 18:30:29 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
+2024-08-29 18:30:29 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Input texts: [PDFText(text=Sample text 1), PDFText(text=Sample text 2)], concept: Sample concept
+2024-08-29 18:30:29 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 1
+2024-08-29 18:30:29 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=llama3.1:8b, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 1"""
+
+Concept: Sample concept, images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:30:30 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "This text appears to be a neutral description of an example, with no apparent emotional tone or bias.", "score": "25.0"}
+2024-08-29 18:30:30 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 2
+2024-08-29 18:30:30 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=llama3.1:8b, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 2"""
+
+Concept: Sample concept, images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:30:32 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "The provided text is a snippet from a larger context, possibly a document or article. It lacks specific details about the topic, but it appears to be discussing a general idea or concept.", "score": 40.0}
+2024-08-29 18:30:32 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Finished calculateScores method. Scores: [25.0, 40.0]
+2024-08-29 18:31:59 [main] WARN  o.s.b.t.j.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer - 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/macie/.m2/repository/org/json/json/20231013/json-20231013.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/macie/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2024-08-29 18:31:59 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Starting OllamaSimilarityServiceTest using Java 17.0.4 with PID 10688 (started by macie in C:\Users\macie\tools\gbp-tool)
+2024-08-29 18:31:59 [main] DEBUG c.O.g.s.OllamaSimilarityServiceTest - Running with Spring Boot v3.3.3, Spring v6.1.12
+2024-08-29 18:31:59 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - No active profile set, falling back to 1 default profile: "default"
+2024-08-29 18:32:03 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-29 18:32:03 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Started OllamaSimilarityServiceTest in 4.324 seconds (process running for 5.295)
+2024-08-29 18:32:03 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
+2024-08-29 18:32:03 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Input texts: [PDFText(text=Sample text 1), PDFText(text=Sample text 2)], concept: Sample concept
+2024-08-29 18:32:03 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 1
+2024-08-29 18:32:03 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=llama3.1:8b, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 1"""
+
+Concept: "Sample concept", images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:32:05 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "This text does not provide sufficient context to establish a meaningful connection with the given concept, hence, it is likely unrelated or superficially related.", "score": 12.5}
+2024-08-29 18:32:05 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 2
+2024-08-29 18:32:05 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=llama3.1:8b, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 2"""
+
+Concept: "Sample concept", images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:32:07 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "The provided text appears to be a brief example, possibly from an educational or instructional context. It contains general information without specific details, making it a generic illustration of a topic. Overall, the tone is neutral and informative.", "score": 50.0}
+2024-08-29 18:32:07 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Finished calculateScores method. Scores: [12.5, 50.0]
+2024-08-29 18:32:52 [main] WARN  o.s.b.t.j.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer - 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/macie/.m2/repository/org/json/json/20231013/json-20231013.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/macie/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2024-08-29 18:32:52 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Starting OllamaSimilarityServiceTest using Java 17.0.4 with PID 18860 (started by macie in C:\Users\macie\tools\gbp-tool)
+2024-08-29 18:32:52 [main] DEBUG c.O.g.s.OllamaSimilarityServiceTest - Running with Spring Boot v3.3.3, Spring v6.1.12
+2024-08-29 18:32:52 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - No active profile set, falling back to 1 default profile: "default"
+2024-08-29 18:32:56 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-08-29 18:32:56 [main] INFO  c.O.g.s.OllamaSimilarityServiceTest - Started OllamaSimilarityServiceTest in 4.489 seconds (process running for 5.473)
+2024-08-29 18:32:56 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
+2024-08-29 18:32:56 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
+2024-08-29 18:32:57 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
+2024-08-29 18:32:57 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Input texts: [PDFText(text=Sample text 1), PDFText(text=Sample text 2)], concept: Sample concept
+2024-08-29 18:32:57 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 1
+2024-08-29 18:32:57 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=mistral, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 1"""
+
+Concept: "Sample concept", images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:33:04 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "I'm unable to provide a three sentence analysis without understanding the specific meaning of 'Sample text 1'. However, I can calculate the similarity score between the text and concept based on their given words.", "score": 35.0}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2024-08-29 18:33:04 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Processing text: Sample text 2
+2024-08-29 18:33:04 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Sending chat request: ChatRequest[model=mistral, messages=[Message[role=SYSTEM, content=Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided, images=null], Message[role=SYSTEM, content=Respond in the following json format: {"analysis": "Brief 3 sentence analysis of the meaning of the text", "score": "Similarity Score in range (0.0-100.0)"}, images=null], Message[role=USER, content=TEXT:"""Sample text 2"""
+
+Concept: "Sample concept", images=null]], stream=false, format=json, keepAlive=null, options={}]
+2024-08-29 18:33:05 [main] DEBUG c.O.g.s.impl.OllamaSimilarityService - Received response content: {"analysis": "The meaning of 'Sample text 2' is not provided as it is blank. In order to calculate a similarity score, both the text and concept must be present.", "score": 0.0}
+2024-08-29 18:33:05 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Finished calculateScores method. Scores: [35.0, 0.0]
+2024-08-29 18:33:05 [main] INFO  c.O.g.s.impl.OllamaSimilarityService - Starting calculateScores method.
