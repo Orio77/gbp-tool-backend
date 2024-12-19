@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,16 @@ public class PostgresRepo implements ISQLRepo {
 
     private static final Logger logger = LoggerFactory.getLogger(PostgresRepo.class);
 
+    // Constants
+    private static final String ERROR_NULL_TITLE = "Provided title cannot be null";
+    private static final String ERROR_EMPTY_TITLE = "Provided title cannot be empty";
+    private static final String ERROR_NULL_FILE = "Provided file was null";
+    private static final String ERROR_NOT_PDF = "File is not a PDF";
+    private static final String ERROR_FILE_EXISTS = "File with name: \"%s\" and provided title \"%s\" already exists in the database";
+    private static final String ERROR_FILE_NOT_FOUND = "File not found with the following title: %s";
+    private static final String ERROR_CHART_NOT_FOUND = "No chart found with the following label \"%s\". Found charts: %s";
+    private static final String PDF_EXTENSION = ".pdf";
+
     private final FileRepo fileRepo;
     @SuppressWarnings("unused")
     private final SimilarityScoreRepo similarityScoreRepo;
@@ -41,19 +52,17 @@ public class PostgresRepo implements ISQLRepo {
     public void saveFile(MultipartFile file, String title)
             throws IllegalArgumentException, FileDataReadingException, FileAlreadyInTheDatabaseException {
         logger.info("Entering saveFile method with title: \"{}\"", title);
-        Assert.notNull(file, "Provided file was null");
-        Assert.notNull(title, "Provided title was empty");
-        Assert.hasText(title, "Provided title cannot be empty");
+        Assert.notNull(file, ERROR_NULL_FILE);
+        validateTitle(title);
 
         if (!isPDF(file)) {
             logger.warn("File is not a PDF: {}", file.getOriginalFilename());
-            throw new IllegalArgumentException("File is not a PDF");
+            throw new IllegalArgumentException(ERROR_NOT_PDF);
         }
 
         if (this.fileAlreadyExists(file, title)) {
             throw new FileAlreadyInTheDatabaseException(
-                    String.format("File with name: \"%s\" and provided title \"%s\" already exists in the database",
-                            file.getOriginalFilename(), title));
+                    String.format(ERROR_FILE_EXISTS, file.getOriginalFilename(), title));
         }
 
         FileEntity fileEntity = new FileEntity();
@@ -120,34 +129,26 @@ public class PostgresRepo implements ISQLRepo {
 
     @Override
     public FileEntity getFile(String title) throws FileNotFoundException {
-        Assert.notNull(title, "Provided title cannot be null");
-        Assert.hasText(title, "Provided title cannot be empty");
+        validateTitle(title);
         logger.info("Attempting to retrieve file with title: {}", title);
 
         List<FileEntity> allFiles = fileRepo.findAll();
-        logger.debug("All files: {}", allFiles.stream().map(FileEntity::getTitle).toArray());
-        logger.info("Found files count: {}", allFiles.size());
+        logEntityCount(allFiles, "files");
 
-        Optional<FileEntity> file = allFiles.stream()
-                .filter(fileEntity -> fileEntity.getTitle().equals(title)).findFirst();
-
-        if (file.isPresent()) {
-            logger.info("File found with title: {}", title);
-            return file.get();
-        } else {
-            logger.error("File not found with the following title: {}", title);
-            throw new FileNotFoundException("File not found with the following title: " + title);
-        }
+        return findByTitle(allFiles, title, FileEntity::getTitle)
+                .orElseThrow(() -> {
+                    logger.error(ERROR_FILE_NOT_FOUND, title);
+                    return new FileNotFoundException(String.format(ERROR_FILE_NOT_FOUND, title));
+                });
     }
 
     private boolean isPDF(MultipartFile file) {
-        return file.getOriginalFilename().toLowerCase().endsWith(".pdf");
+        return file.getOriginalFilename().toLowerCase().endsWith(PDF_EXTENSION);
     }
 
     @Override
     public FileEntity getText(String title) throws FileNotFoundException {
-        Assert.notNull(title, "Provided title cannot be null");
-        Assert.hasText(title, "Provided title cannot be empty");
+        validateTitle(title);
         logger.info("Attempting to retrieve file with title: {}", title);
 
         List<FileEntity> allFiles = fileRepo.findAll();
@@ -207,25 +208,41 @@ public class PostgresRepo implements ISQLRepo {
 
     @Override
     public ChartData getChart(String label) throws ChartNotFoundException {
-        Assert.notNull(label, "Provided label cannot be null");
-        Assert.hasText(label, "Provided label cannot be empty");
+        validateTitle(label);
         logger.info("Attempting to retrieve chart with label: {}", label);
 
         List<ChartData> charts = chartRepo.findAll();
-        logger.debug("All charts: {}", charts.stream().map(ChartData::getLabel).toArray());
-        logger.info("Found charts count: {}", charts.size());
+        logEntityCount(charts, "charts");
 
-        Optional<ChartData> foundChart = charts.stream().filter(chart -> chart.getLabel().equals(label)).findFirst();
-
-        if (foundChart.isPresent()) {
-            logger.info("Chart found with label: {}", label);
-            return foundChart.get();
-        } else {
-            List<String> labels = charts.stream().map(ChartData::getLabel).toList();
-            logger.error("No chart found with the following label: {}. Found charts: {}", label, labels);
-            throw new ChartNotFoundException(
-                    String.format("No chart found with the following label \"%s\". Found charts: %s", label, labels));
-        }
+        return findByTitle(charts, label, ChartData::getLabel)
+                .orElseThrow(() -> {
+                    List<String> labels = charts.stream().map(ChartData::getLabel).toList();
+                    logger.error(ERROR_CHART_NOT_FOUND, label, labels);
+                    return new ChartNotFoundException(String.format(ERROR_CHART_NOT_FOUND, label, labels));
+                });
     }
 
+    /**
+     * Common validation logic for title parameter
+     */
+    private void validateTitle(String title) {
+        Assert.notNull(title, ERROR_NULL_TITLE);
+        Assert.hasText(title, ERROR_EMPTY_TITLE);
+    }
+
+    /**
+     * Common logic for finding an entity by title
+     */
+    private <T> Optional<T> findByTitle(List<T> entities, String title, Function<T, String> titleExtractor) {
+        return entities.stream()
+                .filter(entity -> titleExtractor.apply(entity).equals(title))
+                .findFirst();
+    }
+
+    /**
+     * Helper method to log entity counts
+     */
+    private <T> void logEntityCount(List<T> entities, String entityType) {
+        logger.info("Found {} count: {}", entityType, entities.size());
+    }
 }

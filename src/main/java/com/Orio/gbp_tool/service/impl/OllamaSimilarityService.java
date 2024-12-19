@@ -28,17 +28,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OllamaSimilarityService implements IAISimilarityService {
 
+    private static final Logger logger = LoggerFactory.getLogger(OllamaSimilarityService.class);
+
+    // Constants for message content
+    private static final String FORMAT_JSON = "json";
+    private static final String SYSTEM_ACT_AS_CONTENT = "Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided";
+    private static final String SYSTEM_RESPONSE_FORMAT_CONTENT = "Respond in the following json format: {\"analysis\": \"Brief 3 sentence analysis of the meaning of the text\", \"score\": \"Similarity Score in range (0.0-100.0)\"}";
+    private static final String TEXT_CONCEPT_TEMPLATE = "TEXT:\"\"\"%s\"\"\"\n\nConcept: \"%s\"";
+
+    // Constants for exception messages
+    private static final String JSON_PARSING_ERROR_MSG = "Error occurred while parsing json: {}, Response: {}";
+
     private final OllamaApi ollama;
     private final OllamaConfig config;
     private final ObjectMapper objMapper;
-    private static final Logger logger = LoggerFactory.getLogger(OllamaSimilarityService.class);
 
     @Override
     public List<SimilarityScore> calculateScores(List<PDFText> texts, String concept) { // TODO add periodic saves
         logger.info("Starting calculateScores method.");
-        Assert.notNull(texts, "The 'texts' list must not be null.");
-        Assert.notEmpty(texts, "The 'texts' list must not be empty.");
-        Assert.notNull(concept, "The 'concept' string must not be null.");
+        validateInputs(texts, concept);
 
         logger.debug("Input texts: {}, concept: {}", texts, concept);
 
@@ -46,8 +54,7 @@ public class OllamaSimilarityService implements IAISimilarityService {
 
         for (PDFText text : texts) {
             logger.debug("Processing text: {}", text.getText());
-            ChatRequest request = ChatRequest.builder(config.getModel()).withFormat("json")
-                    .withMessages(this.getMessages(text.getText(), concept)).build();
+            ChatRequest request = buildChatRequest(text.getText(), concept);
             logger.debug("Sending chat request: {}", request);
             ChatResponse response = ollama.chat(request);
 
@@ -57,7 +64,8 @@ public class OllamaSimilarityService implements IAISimilarityService {
             OllamaResponse json = parseJson(content);
 
             if (json != null) {
-                scores.add(new SimilarityScore(text, concept, json.getScore()));
+                SimilarityScore score = createSimilarityScore(text, concept, json);
+                scores.add(score);
             } else {
                 logger.warn("Parsed JSON is null for content: {}", content);
             }
@@ -67,29 +75,81 @@ public class OllamaSimilarityService implements IAISimilarityService {
         return scores;
     }
 
-    private List<Message> getMessages(String text, String concept) {
-        Message systemActAs = Message.builder(Role.SYSTEM).withContent(
-                "Act as a similarity score calculator based on meaning. Return the score as double in range 0-100. The score an indicator of how much the meaning of text matches the concept provided")
+    /**
+     * Validates the input parameters.
+     *
+     * @param texts   List of PDFText objects.
+     * @param concept The concept string.
+     */
+    private void validateInputs(List<PDFText> texts, String concept) {
+        Assert.notNull(texts, "The 'texts' list must not be null.");
+        Assert.notEmpty(texts, "The 'texts' list must not be empty.");
+        Assert.notNull(concept, "The 'concept' string must not be null.");
+    }
+
+    /**
+     * Builds the ChatRequest for a given text and concept.
+     *
+     * @param text    The text content.
+     * @param concept The concept to compare.
+     * @return A ChatRequest object.
+     */
+    private ChatRequest buildChatRequest(String text, String concept) {
+        List<Message> messages = createMessages(text, concept);
+        return ChatRequest.builder(config.getModel())
+                .withFormat(FORMAT_JSON)
+                .withMessages(messages)
                 .build();
-        Message systemResponseFormat = Message.builder(Role.SYSTEM).withContent(
-                "Respond in the following json format: {\"analysis\": \"Brief 3 sentence analysis of the meaning of the text\", \"score\": \"Similarity Score in range (0.0-100.0)\"}")
+    }
+
+    /**
+     * Creates the list of messages for the ChatRequest.
+     *
+     * @param text    The text content.
+     * @param concept The concept to compare.
+     * @return A list of Message objects.
+     */
+    private List<Message> createMessages(String text, String concept) {
+        Message systemActAs = Message.builder(Role.SYSTEM)
+                .withContent(SYSTEM_ACT_AS_CONTENT)
                 .build();
+
+        Message systemResponseFormat = Message.builder(Role.SYSTEM)
+                .withContent(SYSTEM_RESPONSE_FORMAT_CONTENT)
+                .build();
+
         Message userTextConcept = Message.builder(Role.USER)
-                .withContent(String.format("TEXT:\"\"\"%s\"\"\"\n\nConcept: \"%s\"", text, concept)).build();
+                .withContent(String.format(TEXT_CONCEPT_TEMPLATE, text, concept))
+                .build();
 
         return Arrays.asList(systemActAs, systemResponseFormat, userTextConcept);
     }
 
+    /**
+     * Parses the JSON content into an OllamaResponse object.
+     *
+     * @param content The JSON content string.
+     * @return The OllamaResponse object, or null if parsing fails.
+     */
     private OllamaResponse parseJson(String content) {
         try {
-            OllamaResponse responseModel = objMapper.readValue(content,
-                    OllamaResponse.class);
-            return responseModel;
+            return objMapper.readValue(content, OllamaResponse.class);
         } catch (JsonProcessingException e) {
-            logger.error("Error occurred while parsing json: {}, Response: {}", e.getMessage(),
-                    content);
+            logger.error(JSON_PARSING_ERROR_MSG, e.getMessage(), content);
             return null;
         }
     }
 
+    /**
+     * Creates a SimilarityScore object from the given text, concept, and
+     * OllamaResponse.
+     *
+     * @param text     The PDFText object.
+     * @param concept  The concept string.
+     * @param response The OllamaResponse object.
+     * @return A SimilarityScore object.
+     */
+    private SimilarityScore createSimilarityScore(PDFText text, String concept, OllamaResponse response) {
+        return new SimilarityScore(text, concept, response.getScore());
+    }
 }

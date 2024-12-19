@@ -24,6 +24,7 @@ import com.Orio.gbp_tool.exception.FileDataReadingException;
 import com.Orio.gbp_tool.exception.TextAlreadyInTheDatabaseException;
 import com.Orio.gbp_tool.model.ChartData;
 import com.Orio.gbp_tool.model.ChartDataResult;
+import com.Orio.gbp_tool.model.Concept;
 import com.Orio.gbp_tool.model.FileEntity;
 import com.Orio.gbp_tool.model.PDFText;
 import com.Orio.gbp_tool.model.SimilarityScore;
@@ -107,10 +108,9 @@ public class GraphBookController {
     }
 
     @GetMapping("/get/concept/all")
-    public ResponseEntity<List<String>> getAllConcepts() {
-        List<String> concepts;
+    public ResponseEntity<List<Concept>> getAllConcepts() {
         try {
-            concepts = graphRepo.getConcepts();
+            List<Concept> concepts = graphRepo.getConcepts();
             return ResponseEntity.ok(concepts);
         } catch (Exception e) {
             logger.error("An error occurred: {}", e.getMessage());

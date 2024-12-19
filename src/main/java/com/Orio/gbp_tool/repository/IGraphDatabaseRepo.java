@@ -4,6 +4,7 @@ import com.Orio.gbp_tool.exception.ConceptNotRemovedException;
 import com.Orio.gbp_tool.exception.TextAlreadyInTheDatabaseException;
 import com.Orio.gbp_tool.model.PDFText;
 import com.Orio.gbp_tool.model.SimilarityScore;
+import com.Orio.gbp_tool.model.Concept;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface IGraphDatabaseRepo {
 
     void removeText(String label);
 
-    List<String> getConcepts() throws Exception;
+    List<Concept> getConcepts() throws Exception;
 
     void addConcept(List<SimilarityScore> scores, String concept);
 
